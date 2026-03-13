@@ -233,6 +233,10 @@ For detailed guidelines, see [CLAUDE.md](./CLAUDE.md).
 
 This project is open-sourced under the [MIT License](./LICENSE).
 
+## Code of Conduct
+
+This project follows the [Contributor Covenant Code of Conduct](./CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
+
 ---
 
 <div align="center">
