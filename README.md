@@ -39,20 +39,29 @@
 
 ## About
 
-CC Lab is the official website for the **Structural Bioinformatics & Molecular Dynamics Laboratory** at Xi'an Jiaotong-Liverpool University. The lab combines structural bioinformatics, molecular dynamics simulations, and machine learning methods to investigate protein structure-function relationships and develop computational tools for drug discovery.
+This repository contains the source code for the **CC Lab Website** — the official online presence of the Structural Bioinformatics & Molecular Dynamics Laboratory at Xi'an Jiaotong-Liverpool University (XJTLU).
 
-This website showcases the lab's research, team members, publications, and news — built with a modern tech stack and deployed automatically to Netlify.
+### The Lab
 
-### Key Features
+CC Lab focuses on understanding protein structure-function relationships through computational approaches. Our research combines:
+
+- **Structural Bioinformatics** — Analyzing and predicting protein structures
+- **Molecular Dynamics Simulations** — Studying protein dynamics at atomic resolution
+- **Machine Learning** — Developing AI-powered tools for drug discovery
+
+The lab is based in the School of Science at XJTLU and affiliated with the Center for Intelligent RNA Therapeutics.
+
+### This Website
+
+The site serves as a platform to showcase our research, team, and publications. Built with modern web technologies, it features:
 
 | Feature | Description |
 |---------|-------------|
-| **Static Hosting** | Deployed on Netlify — fast, reliable, with continuous deployment |
-| **Content Management** | Decap CMS integration for non-technical content editing |
-| **Responsive Design** | Mobile-first layout with dark mode support |
-| **Dynamic Data** | JSON-based content with version control and easy updates |
-| **Type-Safe** | Full TypeScript strict mode for robust development |
-| **BibTeX Import** | Batch import publications with automatic parsing |
+| **Decap CMS** | Non-technical team members can update content via `/admin/` |
+| **BibTeX Import** | Batch import publications with automatic author formatting |
+| **Dark Mode** | Toggle between light and dark themes |
+| **Responsive** | Mobile-first design that works on all devices |
+| **Type-Safe** | Full TypeScript strict mode for reliability |
 
 ---
 
