@@ -16,7 +16,7 @@ export const Footer: React.FC = () => {
 
         <div className="flex items-center gap-3">
           <a
-            href="https://github.com/colinzyang/cc.lab.xjtlu.github.io"
+            href="https://github.com/colinzyang/cc-lab-website"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:opacity-80 transition-opacity"

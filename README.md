@@ -13,7 +13,7 @@
 
 *Xian Jiaotong-Liverpool University (XJTLU)*
 
-[Live Site](https://cc-lab-xjtlu.netlify.app) · [Report Bug](https://github.com/colinzyang/cc.lab.xjtlu.github.io/issues) · [Request Feature](https://github.com/colinzyang/cc.lab.xjtlu.github.io/issues)
+[Live Site](https://cc-lab-xjtlu.netlify.app) · [Report Bug](https://github.com/colinzyang/cc-lab-website/issues) · [Request Feature](https://github.com/colinzyang/cc-lab-website/issues)
 
 </div>
 
@@ -91,8 +91,8 @@ The site serves as a platform to showcase our research, team, and publications. 
 
 ```bash
 # Clone the repository
-git clone https://github.com/colinzyang/cc.lab.xjtlu.github.io.git
-cd cc.lab.xjtlu.github.io
+git clone https://github.com/colinzyang/cc-lab-website.git
+cd cc-lab-website
 
 # Install dependencies
 npm install
@@ -270,8 +270,8 @@ We welcome contributions! Please see our [Contributing Guidelines](./CONTRIBUTIN
 
 ### Quick Links
 
-- [Report a Bug](https://github.com/colinzyang/cc.lab.xjtlu.github.io/issues)
-- [Request a Feature](https://github.com/colinzyang/cc.lab.xjtlu.github.io/issues)
+- [Report a Bug](https://github.com/colinzyang/cc-lab-website/issues)
+- [Request a Feature](https://github.com/colinzyang/cc-lab-website/issues)
 - [Contribution Guidelines](./CONTRIBUTING.md)
 
 ---

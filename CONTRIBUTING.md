@@ -27,8 +27,8 @@ This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDU
 
 ```bash
 # Clone the repository
-git clone https://github.com/colinzyang/cc.lab.xjtlu.github.io.git
-cd cc.lab.xjtlu.github.io
+git clone https://github.com/colinzyang/cc-lab-website.git
+cd cc-lab-website
 
 # Install dependencies
 npm install
@@ -212,7 +212,7 @@ How were these changes tested?
 
 ### Bug Reports
 
-Use [GitHub Issues](https://github.com/colinzyang/cc.lab.xjtlu.github.io/issues) and include:
+Use [GitHub Issues](https://github.com/colinzyang/cc-lab-website/issues) and include:
 
 - **Description** - Clear description of the bug
 - **Steps to reproduce** - Numbered list of steps
