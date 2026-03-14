@@ -13,9 +13,27 @@
 
 *Xian Jiaotong-Liverpool University (XJTLU)*
 
-[Live Site](#) · [Report Bug](https://github.com/colinzyang/cc.lab.xjtlu.github.io/issues) · [Request Feature](https://github.com/colinzyang/cc.lab.xjtlu.github.io/issues)
+[Live Site](https://cc-lab-xjtlu.netlify.app) · [Report Bug](https://github.com/colinzyang/cc.lab.xjtlu.github.io/issues) · [Request Feature](https://github.com/colinzyang/cc.lab.xjtlu.github.io/issues)
 
 </div>
+
+---
+
+## Table of Contents
+
+- [About](#about)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [Routing](#routing)
+- [Content Management](#content-management)
+- [Deployment](#deployment)
+- [Image Management](#image-management)
+- [Browser Support](#browser-support)
+- [Contributing](#contributing)
+- [License](#license)
+- [Code of Conduct](#code-of-conduct)
+- [Contact](#contact)
 
 ---
 
@@ -34,6 +52,7 @@ This website showcases the lab's research, team members, publications, and news 
 | **Responsive Design** | Mobile-first layout with dark mode support |
 | **Dynamic Data** | JSON-based content with version control and easy updates |
 | **Type-Safe** | Full TypeScript strict mode for robust development |
+| **BibTeX Import** | Batch import publications with automatic parsing |
 
 ---
 
@@ -57,7 +76,7 @@ This website showcases the lab's research, team members, publications, and news 
 ### Prerequisites
 
 - **Node.js** v18 or higher
-- **npm** or yarn
+- **npm** v9 or higher
 
 ### Installation
 
@@ -108,14 +127,16 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 ├── index.html               # HTML template
 ├── vite.config.ts           # Vite configuration
 ├── tsconfig.json            # TypeScript configuration
-└── CLAUDE.md                # Detailed developer guidelines
+├── CLAUDE.md                # Detailed developer guidelines
+├── CONTRIBUTING.md          # Contribution guidelines
+└── CODE_OF_CONDUCT.md       # Code of Conduct
 ```
 
 ---
 
 ## Routing
 
-The site uses **hash-based routing** for GitHub Pages compatibility.
+The site uses **hash-based routing** for static hosting compatibility.
 
 | Route | Page |
 |-------|------|
@@ -135,7 +156,7 @@ The site uses **hash-based routing** for GitHub Pages compatibility.
 Access the CMS to manage content without touching code:
 
 - **Development:** `http://localhost:5173/admin/`
-- **Production:** `https://your-domain.com/admin/`
+- **Production:** `https://cc-lab-xjtlu.netlify.app/admin/`
 
 ### Editable Collections
 
@@ -229,18 +250,48 @@ For detailed guidelines, see [CLAUDE.md](./CLAUDE.md).
 
 ---
 
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](./CONTRIBUTING.md) for details on:
+
+- Development workflow
+- Coding standards
+- Commit message conventions
+- Pull request process
+
+### Quick Links
+
+- [Report a Bug](https://github.com/colinzyang/cc.lab.xjtlu.github.io/issues)
+- [Request a Feature](https://github.com/colinzyang/cc.lab.xjtlu.github.io/issues)
+- [Contribution Guidelines](./CONTRIBUTING.md)
+
+---
+
 ## License
 
 This project is open-sourced under the [MIT License](./LICENSE).
 
+---
+
 ## Code of Conduct
 
-This project follows the [Contributor Covenant Code of Conduct](./CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
+This project follows the [Contributor Covenant Code of Conduct](./CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report any unacceptable behavior to [Chun.Chan@xjtlu.edu.cn](mailto:Chun.Chan@xjtlu.edu.cn).
+
+---
+
+## Contact
+
+**CC Lab @ XJTLU**
+
+- **Principal Investigator:** Kevin Chan
+- **Email:** [Chun.Chan@xjtlu.edu.cn](mailto:Chun.Chan@xjtlu.edu.cn)
+- **School:** School of Science, Center for Intelligent RNA Therapeutics
+- **Website:** [https://cc-lab-xjtlu.netlify.app](https://cc-lab-xjtlu.netlify.app)
 
 ---
 
 <div align="center">
 
-**CC Lab @ XJTLU** · School of Science · Center for Intelligent RNA Therapeutics
+Made with ❤️ by CC Lab
 
 </div>
