@@ -1,6 +1,36 @@
 {
   "items": [
     {
+      "date": "March 2026",
+      "title": "MSc Student Chen Chu Presenting at XJTLU/XJTU/Liverpool Joint Symposium",
+      "category": "Conference",
+      "excerpt": "Chen Chu presents her poster research at the joint symposium bringing together students and faculty from XJTLU, Xi'an Jiaotong University, and the University of Liverpool."
+    },
+    {
+      "date": "March 2026",
+      "title": "Two SURF Projects Launching This Summer on Agentic Bioinformatics",
+      "category": "Research",
+      "excerpt": "CC Lab will host two Summer Undergraduate Research Fellowship (SURF) projects focused on agentic AI workflows for bioinformatics — applications open soon."
+    },
+    {
+      "date": "January 2026",
+      "title": "Welcome Vivian Xia — Our First PhD Student",
+      "category": "Lab News",
+      "excerpt": "Vivian Xia joins CC Lab as our first PhD student. A proud XJTLU alumna who went on to complete her Master's at Columbia University, she returns to work on representation learning for biomolecules."
+    },
+    {
+      "date": "January 2026",
+      "title": "PG Research Scholarship Awarded for New PhD Recruitment",
+      "category": "Funding",
+      "excerpt": "CC Lab has been awarded a Postgraduate Research Scholarship (PGRS), opening a new fully-funded PhD position in computational biology and drug discovery."
+    },
+    {
+      "date": "November 2025",
+      "title": "Industrial Grant Secured from SIP Biobay for Next-Generation Immunotherapy",
+      "category": "Funding",
+      "excerpt": "CC Lab receives a major grant from a Suzhou Industrial Park (SIP) Biobay industrial partner to advance computational design of next-generation immunotherapies."
+    },
+    {
       "date": "January 2026",
       "title": "New Paper in Scientific Reports: Neoantigen Vaccine Maturation",
       "category": "Publication",
