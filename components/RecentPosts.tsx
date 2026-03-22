@@ -29,7 +29,7 @@ export const RecentPosts: React.FC = () => {
 
   React.useEffect(() => {
     loadNews()
-      .then(data => setPosts(data.items.slice(0, 3)))
+      .then(data => setPosts(data.slice(0, 3)))
       .catch(console.error);
   }, []);
 
