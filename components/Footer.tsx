@@ -41,6 +41,21 @@ export const Footer: React.FC = () => {
           </a>
         </div>
       </div>
+
+      <div className="text-center pb-4 -mt-14">
+        <p className="text-xs text-gray-400 dark:text-gray-500">
+          This project is released under the{' '}
+          <a
+            href="https://opensource.org/licenses/MIT"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
+          >
+            MIT License
+          </a>
+          .
+        </p>
+      </div>
     </footer>
   );
 };
