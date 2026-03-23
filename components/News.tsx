@@ -2,7 +2,31 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBreadcrumb } from '../src/context/BreadcrumbContext';
 import { loadNews, NewsItem } from '../src/lib/dataLoader';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ImageOff } from 'lucide-react';
+
+// Image component with error handling
+const NewsImage: React.FC<{ src: string; alt: string }> = ({ src, alt }) => {
+  const [error, setError] = useState(false);
+
+  if (error) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 dark:text-subtext">
+        <ImageOff className="w-8 h-8 mb-2" />
+        <span className="text-xs">Failed to load</span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+      loading="lazy"
+      onError={() => setError(true)}
+    />
+  );
+};
 
 export const News: React.FC = () => {
   const { setBreadcrumbs } = useBreadcrumb();
@@ -114,12 +138,7 @@ export const News: React.FC = () => {
                             key={imgIdx}
                             className="aspect-video bg-gray-100 dark:bg-surface1 rounded-lg overflow-hidden"
                           >
-                            <img
-                              src={imgSrc}
-                              alt={`${item.title} - image ${imgIdx + 1}`}
-                              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                              loading="lazy"
-                            />
+                            <NewsImage src={imgSrc} alt={`${item.title} - image ${imgIdx + 1}`} />
                           </div>
                         );
                       })}
