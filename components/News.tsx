@@ -25,8 +25,8 @@ export const News: React.FC = () => {
   if (loading) {
     return (
       <div className="w-full max-w-4xl mx-auto">
-        <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6">News & Events</h1>
-        <p className="text-slate-600 dark:text-gray-300">Loading...</p>
+        <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-text mb-6">News & Events</h1>
+        <p className="text-slate-600 dark:text-text">Loading...</p>
       </div>
     );
   }
@@ -39,10 +39,10 @@ export const News: React.FC = () => {
         transition={{ duration: 0.6 }}
         className="mb-12"
       >
-        <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6">News & Events</h1>
+        <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-text mb-6">News & Events</h1>
       </motion.div>
 
-      <div className="relative border-l border-gray-200 dark:border-gray-800 ml-4 space-y-12 pb-12">
+      <div className="relative border-l border-gray-200 dark:border-border ml-4 space-y-12 pb-12">
         {newsItems.map((item, idx) => (
           <motion.div
             key={idx}
@@ -53,16 +53,16 @@ export const News: React.FC = () => {
             className="pl-8 relative"
           >
             {/* Timeline dot */}
-            <div className="absolute -left-[5px] top-2 w-2.5 h-2.5 bg-primary rounded-full ring-4 ring-white dark:ring-background-dark" />
+            <div className="absolute -left-[5px] top-2 w-2.5 h-2.5 bg-primary dark:bg-primary-dark rounded-full ring-4 ring-white dark:ring-background-dark" />
 
-            <span className="text-xs font-mono text-primary uppercase tracking-wider mb-1 block">
+            <span className="text-xs font-mono text-primary dark:text-primary-dark uppercase tracking-wider mb-1 block">
               {item.category} • {item.date}
             </span>
-            <h3 className="text-2xl font-medium text-slate-900 dark:text-white mb-3">
+            <h3 className="text-2xl font-medium text-slate-900 dark:text-text mb-3">
               {item.title}
             </h3>
             {item.excerpt && (
-              <p className="text-slate-600 dark:text-gray-400 leading-relaxed">
+              <p className="text-slate-600 dark:text-subtext leading-relaxed">
                 {item.excerpt}
               </p>
             )}

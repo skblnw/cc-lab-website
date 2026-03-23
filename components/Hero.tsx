@@ -54,7 +54,7 @@ export const Hero: React.FC = () => {
       {/* Text Content */}
       <div className="lg:col-span-7 flex flex-col items-start gap-10">
         <motion.h1
-          className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-black tracking-[-0.04em] leading-[0.9] text-slate-900 dark:text-white uppercase break-words"
+          className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-black tracking-[-0.04em] leading-[0.9] text-slate-900 dark:text-text uppercase break-words"
           variants={itemVariants}
         >
           Computation.<br />
@@ -63,13 +63,13 @@ export const Hero: React.FC = () => {
         </motion.h1>
 
         <motion.div
-          className="w-24 h-1.5 bg-slate-900 dark:bg-white"
+          className="w-24 h-1.5 bg-slate-900 dark:bg-text"
           variants={itemVariants}
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
           <motion.p
-            className="text-lg font-normal leading-relaxed text-slate-800 dark:text-gray-300 max-w-md"
+            className="text-lg font-normal leading-relaxed text-slate-800 dark:text-text max-w-md"
             variants={itemVariants}
           >
             {labInfo?.description || "Loading..."}
@@ -81,7 +81,7 @@ export const Hero: React.FC = () => {
           >
             <Link
               to="/research"
-              className="group flex items-center gap-3 text-primary font-bold text-lg tracking-tight hover:text-[#003366] transition-all"
+              className="group flex items-center gap-3 text-primary dark:text-primary-dark font-bold text-lg tracking-tight hover:text-[#003366] dark:hover:text-[#b4d0fe] transition-all"
             >
               Explore Research
               <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1 group-active:translate-x-2" />
@@ -96,7 +96,7 @@ export const Hero: React.FC = () => {
         variants={imageVariants}
       >
         {/* Geometric Container */}
-        <div className="w-full aspect-square relative bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 overflow-hidden shadow-2xl shadow-gray-200/50 dark:shadow-none">
+        <div className="w-full aspect-square relative bg-gray-50 dark:bg-surface border border-gray-100 dark:border-border overflow-hidden shadow-2xl shadow-gray-200/50 dark:shadow-none">
           {/* Background Image */}
           <div
             className="absolute inset-0 bg-cover bg-center transition-transform duration-[1.5s] ease-in-out group-hover:scale-110 grayscale contrast-125"
@@ -113,10 +113,10 @@ export const Hero: React.FC = () => {
 
           {/* Decorative Elements */}
           <div className="absolute top-0 right-0 p-6">
-            <Network className="text-primary w-10 h-10 opacity-60" strokeWidth={1.5} />
+            <Network className="text-primary dark:text-primary-dark w-10 h-10 opacity-60" strokeWidth={1.5} />
           </div>
 
-          <div className="absolute bottom-6 left-6 font-mono text-xs text-primary font-bold uppercase tracking-widest opacity-90 bg-white/80 dark:bg-black/80 px-2 py-1 backdrop-blur-sm">
+          <div className="absolute bottom-6 left-6 font-mono text-xs text-primary dark:text-primary-dark font-bold uppercase tracking-widest opacity-90 bg-white/80 dark:bg-black/80 px-2 py-1 backdrop-blur-sm">
             Fig. 01 — Protein Structure
           </div>
         </div>
