@@ -7,7 +7,7 @@ const NAV_LINKS = [
   { name: 'Member', href: '/member' },
   { name: 'Research', href: '/research' },
   { name: 'Publication', href: '/publication' },
-  { name: 'Resources', href: '/resources' },
+  // { name: 'Resources', href: '/resources' }, // TODO: 暂时隐藏，待内容完善后恢复
   { name: 'News', href: '/news' },
   { name: 'Contact', href: '/contact' },
 ];
