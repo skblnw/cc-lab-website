@@ -67,24 +67,21 @@ export const Hero: React.FC = () => {
           variants={itemVariants}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+        <div className="flex flex-col gap-6 w-full max-w-2xl">
           <motion.p
-            className="text-lg font-normal leading-relaxed text-slate-800 dark:text-text max-w-md"
+            className="text-lg font-normal leading-relaxed text-slate-800 dark:text-text"
             variants={itemVariants}
           >
             {labInfo?.description || "Loading..."}
           </motion.p>
 
-          <motion.div
-            className="flex items-start md:justify-start pt-1"
-            variants={itemVariants}
-          >
+          <motion.div variants={itemVariants}>
             <Link
               to="/research"
-              className="group flex items-center gap-3 text-primary dark:text-primary-dark font-bold text-lg tracking-tight hover:text-[#003366] dark:hover:text-[#b4d0fe] transition-all"
+              className="group inline-flex items-center gap-3 border-2 border-primary dark:border-primary-dark px-6 py-3 text-primary dark:text-primary-dark font-bold text-lg tracking-tight hover:bg-primary dark:hover:bg-primary-dark hover:text-white dark:hover:text-slate-900 transition-all duration-300"
             >
               Explore Research
-              <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1 group-active:translate-x-2" />
+              <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2" />
             </Link>
           </motion.div>
         </div>
@@ -92,7 +89,7 @@ export const Hero: React.FC = () => {
 
       {/* Visual Content */}
       <motion.div
-        className="lg:col-span-5 w-full h-full min-h-[400px] flex items-center justify-center relative group lg:-mt-20"
+        className="lg:col-span-5 w-full h-full min-h-[400px] flex items-center justify-center relative group lg:-mt-[25px]"
         variants={imageVariants}
       >
         {/* Geometric Container */}

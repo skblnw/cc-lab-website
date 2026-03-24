@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Brain, Dna, Pill, Lightbulb, Github, Database, Terminal, LucideIcon } from 'lucide-react';
+import { Brain, Dna, Pill, Lightbulb, Github, Database, Terminal, LucideIcon, Target } from 'lucide-react';
 import { useBreadcrumb } from '../src/context/BreadcrumbContext';
 import { loadResearch, ResearchData, IconName } from '../src/lib/dataLoader';
 
@@ -73,7 +73,10 @@ export const Research: React.FC = () => {
         transition={{ duration: 0.6, delay: 0.1 }}
         className="mb-16"
       >
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-text mb-8">Research Directions</h2>
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-text mb-8 border-b border-gray-200 dark:border-border pb-4 flex items-center gap-3">
+          <Target className="w-7 h-7 text-primary dark:text-primary-dark" />
+          Research Directions
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {data.directions.map((direction, idx) => (
             <motion.div
