@@ -1,8 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Github, GraduationCap } from 'lucide-react';
+import { Mail, Github, GraduationCap, Shuffle, RotateCcw } from 'lucide-react';
 import { useBreadcrumb } from '../src/context/BreadcrumbContext';
 import { loadMembers, Member as MemberType } from '../src/lib/dataLoader';
+
+// April Fools' Day check
+const isAprilFools = (): boolean => {
+  const now = new Date();
+  return now.getMonth() === 3 && now.getDate() === 1;
+};
+
+// Fisher-Yates shuffle algorithm
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
 
 const ROLE_ORDER: Record<string, number> = {
   'PhD Student': 0,
@@ -43,6 +59,31 @@ export const Member: React.FC = () => {
   const [alumni, setAlumni] = useState<MemberType[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // April Fools' shuffle state - maps positions to random people
+  const [shuffledPositions, setShuffledPositions] = useState<MemberType[]>([]);
+  const [isShuffled, setIsShuffled] = useState(false);
+  const showAprilFools = isAprilFools();
+
+  // All people for shuffling
+  const allPeople = pi ? [pi, ...members] : members;
+
+  const handleShuffle = () => {
+    // Shuffle everyone and create position mapping
+    setShuffledPositions(shuffleArray(allPeople));
+    setIsShuffled(true);
+  };
+
+  const handleReset = () => {
+    setShuffledPositions([]);
+    setIsShuffled(false);
+  };
+
+  // Get person for a specific position (by index)
+  const getPersonAt = (index: number): MemberType => {
+    if (!isShuffled || shuffledPositions.length === 0) return allPeople[index];
+    return shuffledPositions[index] || allPeople[index];
+  };
+
   useEffect(() => {
     setBreadcrumbs([{ label: 'People' }]);
   }, [setBreadcrumbs]);
@@ -79,13 +120,54 @@ export const Member: React.FC = () => {
         transition={{ duration: 0.6 }}
         className="mb-16"
       >
-        <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-text mb-6">People</h1>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-text">People</h1>
+          {/* April Fools' Shuffle Buttons */}
+          {showAprilFools && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="flex flex-col sm:flex-row items-start sm:items-center gap-2"
+            >
+              {/* April Fools Hint */}
+              <div className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-subtext">
+                <motion.span
+                  animate={{ rotate: [0, 8, -8, 0] }}
+                  transition={{ duration: 0.4, repeat: Infinity, repeatDelay: 5 }}
+                >
+                  🎭
+                </motion.span>
+                <span className="text-xs font-medium">
+                  Click the button to become PI
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                onClick={handleShuffle}
+                disabled={isShuffled}
+                className="group inline-flex items-center gap-2 border-2 border-primary dark:border-primary-dark px-4 py-2 text-primary dark:text-primary-dark font-bold text-sm tracking-tight hover:bg-primary dark:hover:bg-primary-dark hover:text-white dark:hover:text-slate-900 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:dark:hover:bg-transparent disabled:hover:text-primary disabled:dark:hover:text-primary-dark"
+              >
+                <Shuffle className="w-4 h-4 transition-transform duration-500 group-hover:rotate-180" />
+                Shuffle
+              </button>
+              <button
+                onClick={handleReset}
+                disabled={!isShuffled}
+                className="group inline-flex items-center gap-2 border-2 border-slate-400 dark:border-subtext px-4 py-2 text-slate-600 dark:text-subtext font-bold text-sm tracking-tight hover:bg-slate-600 dark:hover:bg-subtext hover:text-white dark:hover:text-slate-900 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:dark:hover:bg-transparent disabled:hover:text-slate-600 disabled:dark:hover:text-subtext"
+              >
+                <RotateCcw className="w-4 h-4 transition-transform duration-300" />
+                Reset
+              </button>
+              </div>
+            </motion.div>
+          )}
+        </div>
       </motion.div>
 
-      {/* PI Section */}
+      {/* PI Section - shows shuffled person when isShuffled */}
       <div className="mb-16">
         <h2 className="text-2xl font-bold text-slate-900 dark:text-text mb-8 border-b border-gray-200 dark:border-border pb-4">
-          Principal Investigator
+          {isShuffled ? '🎭 Principal Investigator' : 'Principal Investigator'}
         </h2>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -95,39 +177,39 @@ export const Member: React.FC = () => {
         >
           <div className="md:col-span-4 aspect-square overflow-hidden rounded-full bg-gray-100 dark:bg-surface">
             <img
-              src={pi.image}
-              alt={pi.name}
+              src={getPersonAt(0).image}
+              alt={getPersonAt(0).name}
               className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
             />
           </div>
           <div className="md:col-span-8 flex flex-col justify-center h-full pt-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-text mb-6">{pi.name}</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-text mb-6">{getPersonAt(0).name}</h2>
             <p className="text-lg text-slate-600 dark:text-text mb-6 leading-relaxed">
-              {pi.bio_long}
+              {getPersonAt(0).bio_long}
             </p>
-            {pi.interest && (
+            {getPersonAt(0).interest && (
               <div className="text-sm font-semibold text-slate-500 dark:text-subtext mb-4">
-                Focus: {pi.interest}
+                Focus: {getPersonAt(0).interest}
               </div>
             )}
             <div className="flex gap-4 items-center">
-              {pi.email && (
-                <a href={`mailto:${pi.email}`} className="text-slate-600 dark:text-subtext hover:text-primary dark:hover:text-primary-dark transition-colors">
+              {getPersonAt(0).email && (
+                <a href={`mailto:${getPersonAt(0).email}`} className="text-slate-600 dark:text-subtext hover:text-primary dark:hover:text-primary-dark transition-colors">
                   <Mail className="w-5 h-5" />
                 </a>
               )}
-              {pi.github && (
-                <a href={`https://github.com/${pi.github}`} target="_blank" rel="noopener noreferrer" className="text-slate-600 dark:text-subtext hover:text-primary dark:hover:text-primary-dark transition-colors">
+              {getPersonAt(0).github && (
+                <a href={`https://github.com/${getPersonAt(0).github}`} target="_blank" rel="noopener noreferrer" className="text-slate-600 dark:text-subtext hover:text-primary dark:hover:text-primary-dark transition-colors">
                   <Github className="w-5 h-5" />
                 </a>
               )}
-              {pi.google_scholar && (
-                <a href={`https://scholar.google.com/citations?user=${pi.google_scholar}`} target="_blank" rel="noopener noreferrer" className="text-slate-600 dark:text-subtext hover:text-primary dark:hover:text-primary-dark transition-colors">
+              {getPersonAt(0).google_scholar && (
+                <a href={`https://scholar.google.com/citations?user=${getPersonAt(0).google_scholar}`} target="_blank" rel="noopener noreferrer" className="text-slate-600 dark:text-subtext hover:text-primary dark:hover:text-primary-dark transition-colors">
                   <GraduationCap className="w-5 h-5" />
                 </a>
               )}
-              {pi.orcid && (
-                <a href={`https://orcid.org/${pi.orcid}`} target="_blank" rel="noopener noreferrer" className="text-slate-600 dark:text-subtext hover:text-primary dark:hover:text-primary-dark transition-colors text-xs font-bold">
+              {getPersonAt(0).orcid && (
+                <a href={`https://orcid.org/${getPersonAt(0).orcid}`} target="_blank" rel="noopener noreferrer" className="text-slate-600 dark:text-subtext hover:text-primary dark:hover:text-primary-dark transition-colors text-xs font-bold">
                   ORCID
                 </a>
               )}
@@ -136,74 +218,86 @@ export const Member: React.FC = () => {
         </motion.div>
       </div>
 
-      {/* Members — grouped by role */}
-      {groups.map((group, groupIdx) => (
-        <div key={group.label} className="mb-16">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-text mb-8 border-b border-gray-200 dark:border-border pb-4">
-            {group.label}
-          </h2>
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-x-8 gap-y-12">
-            {group.members.map((member, idx) => (
-              <motion.div
-                key={member.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: groupIdx * 0.05 + idx * 0.05 + 0.2 }}
-              >
-                <div className="aspect-square overflow-hidden rounded-full bg-gray-100 dark:bg-surface mb-5 relative">
-                  <img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
-                  />
-                </div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-text leading-tight">{member.name}</h3>
-                <p className="text-primary dark:text-primary-dark font-medium text-sm my-1">{member.title || member.role}</p>
-                {member.interest && (
-                  <p className="text-sm text-slate-500 dark:text-subtext leading-snug">{member.interest}</p>
-                )}
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      ))}
+          {/* Members — grouped by role */}
+          {groups.map((group, groupIdx) => {
+            // Calculate starting index for this group (PI is index 0)
+            let startIdx = 1;
+            for (let i = 0; i < groupIdx; i++) {
+              startIdx += groups[i].members.length;
+            }
 
-      {/* Alumni — compact text roster, hidden when empty */}
-      {alumni.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="mb-16"
-        >
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-text mb-8 border-b border-gray-200 dark:border-border pb-4">
-            Alumni
-          </h2>
-          <div className="divide-y divide-gray-100 dark:divide-border">
-            {alumni.map((alum, idx) => (
-              <motion.div
-                key={alum.name}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.04 + 0.3 }}
-                className="py-3 flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-0"
-              >
-                <span className="font-semibold text-slate-900 dark:text-text sm:w-48 shrink-0">
-                  {alum.name}
-                </span>
-                <span className="text-sm text-primary dark:text-primary-dark font-medium sm:w-48 shrink-0">
-                  {alum.title || alum.role}
-                </span>
-                {alum.current_position && (
-                  <span className="text-sm text-slate-500 dark:text-subtext">
-                    → {alum.current_position}
-                  </span>
-                )}
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      )}
+            return (
+              <div key={group.label} className="mb-16">
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-text mb-8 border-b border-gray-200 dark:border-border pb-4">
+                  {group.label}
+                </h2>
+                <div className="grid grid-cols-2 lg:grid-cols-5 gap-x-8 gap-y-12">
+                  {group.members.map((_, idx) => {
+                    const globalIdx = startIdx + idx;
+                    const person = getPersonAt(globalIdx);
+                    return (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: groupIdx * 0.05 + idx * 0.05 + 0.2 }}
+                      >
+                        <div className="aspect-square overflow-hidden rounded-full bg-gray-100 dark:bg-surface mb-5">
+                          <img
+                            src={person.image}
+                            alt={person.name}
+                            className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                          />
+                        </div>
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-text leading-tight">{person.name}</h3>
+                        <p className="text-primary dark:text-primary-dark font-medium text-sm my-1">{person.title || person.role}</p>
+                        {person.interest && (
+                          <p className="text-sm text-slate-500 dark:text-subtext leading-snug">{person.interest}</p>
+                        )}
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Alumni — compact text roster, hidden when empty */}
+          {alumni.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="mb-16"
+            >
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-text mb-8 border-b border-gray-200 dark:border-border pb-4">
+                Alumni
+              </h2>
+              <div className="divide-y divide-gray-100 dark:divide-border">
+                {alumni.map((alum, idx) => (
+                  <motion.div
+                    key={alum.name}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.04 + 0.3 }}
+                    className="py-3 flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-0"
+                  >
+                    <span className="font-semibold text-slate-900 dark:text-text sm:w-48 shrink-0">
+                      {alum.name}
+                    </span>
+                    <span className="text-sm text-primary dark:text-primary-dark font-medium sm:w-48 shrink-0">
+                      {alum.title || alum.role}
+                    </span>
+                    {alum.current_position && (
+                      <span className="text-sm text-slate-500 dark:text-subtext">
+                        → {alum.current_position}
+                      </span>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
     </div>
   );
 };
