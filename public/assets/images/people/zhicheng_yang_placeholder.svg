@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <rect width="400" height="400" fill="#1a1a2e"/>
+  <text font-family="monospace" font-size="14" fill="#ff6600" text-anchor="middle">
+    <tspan x="200" y="100">     .-----.</tspan>
+    <tspan x="200" y="116">    /       \</tspan>
+    <tspan x="200" y="132">   |  ^   ^  |</tspan>
+    <tspan x="200" y="148">   |  (o o)  |</tspan>
+    <tspan x="200" y="164">   |   /_\   |</tspan>
+    <tspan x="200" y="180">   |  {___}  |</tspan>
+    <tspan x="200" y="196">    \_______/</tspan>
+    <tspan x="200" y="212">    /|     |\</tspan>
+    <tspan x="200" y="228">   / |     | \</tspan>
+    <tspan x="200" y="244">  ~  |     |  ~</tspan>
+    <tspan x="200" y="260">     |     |</tspan>
+    <tspan x="200" y="276">     |_ _ _|</tspan>
+    <tspan x="200" y="292">    /       \</tspan>
+    <tspan x="200" y="308">   ~~~     ~~~</tspan>
+  </text>
+  <text font-family="monospace" font-size="11" fill="#44ff44" text-anchor="middle">
+    <tspan x="200" y="345">&gt;_ web developer</tspan>
+  </text>
+</svg>
