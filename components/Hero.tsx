@@ -78,7 +78,7 @@ export const Hero: React.FC = () => {
           <motion.div variants={itemVariants}>
             <Link
               to="/research"
-              className="group inline-flex items-center gap-3 border-2 border-primary dark:border-primary-dark px-6 py-3 text-primary dark:text-primary-dark font-bold text-lg tracking-tight hover:bg-primary dark:hover:bg-primary-dark hover:text-white dark:hover:text-slate-900 transition-all duration-300"
+              className="group inline-flex items-center gap-3 border-2 border-primary dark:border-primary-dark px-6 py-2.25 text-primary dark:text-primary-dark font-bold text-lg tracking-tight hover:bg-primary dark:hover:bg-primary-dark hover:text-white dark:hover:text-slate-900 transition-all duration-300"
             >
               Explore Research
               <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2" />
