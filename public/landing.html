@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CC Lab @ XJTLU — Bio Data Terminal</title>
+<meta name="description" content="Structural Bioinformatics & Molecular Dynamics — CC Lab at Xi'an Jiaotong-Liverpool University." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --bg:#1e1e2e;
+    --surface:#313244;
+    --surface1:#45475a;
+    --accent:#89b4fa;
+    --text:#cdd6f4;
+    --subtext:#a6adc8;
+    --mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans:"Inter", system-ui, sans-serif;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:auto;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  /* faint grid background */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:-2;
+    background-image:
+      linear-gradient(rgba(69,71,90,0.18) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(69,71,90,0.18) 1px, transparent 1px);
+    background-size:48px 48px;
+    pointer-events:none;
+  }
+  body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(137,180,250,0.07), transparent 70%);
+    pointer-events:none;
+  }
+
+  ::selection{background:var(--accent);color:var(--bg);}
+
+  a{color:inherit;text-decoration:none;}
+
+  .mono{font-family:var(--mono);}
+  .accent{color:var(--accent);}
+  .sub{color:var(--subtext);}
+
+  /* ===== Layout primitives ===== */
+  section{position:relative;}
+  .wrap{
+    width:min(1180px,92vw);
+    margin-inline:auto;
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--accent);
+  }
+  .seclabel{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--subtext);
+    letter-spacing:.04em;
+    margin-bottom:14px;
+  }
+  .seclabel::before{content:"";}
+
+  /* HUD corner frame */
+  .hud{
+    position:relative;
+    border:1px solid var(--surface1);
+    background:linear-gradient(180deg, rgba(49,50,68,0.35), rgba(49,50,68,0.12));
+  }
+  .hud .corner{
+    position:absolute;width:12px;height:12px;border:2px solid var(--accent);
+  }
+  .hud .corner.tl{top:-1px;left:-1px;border-right:none;border-bottom:none;}
+  .hud .corner.tr{top:-1px;right:-1px;border-left:none;border-bottom:none;}
+  .hud .corner.bl{bottom:-1px;left:-1px;border-right:none;border-top:none;}
+  .hud .corner.br{bottom:-1px;right:-1px;border-left:none;border-top:none;}
+
+  /* blinking cursor */
+  .cursor{
+    display:inline-block;
+    width:9px;height:1.05em;
+    background:var(--accent);
+    margin-left:3px;
+    transform:translateY(2px);
+    animation:blink 1.05s steps(1) infinite;
+  }
+  @keyframes blink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
+
+  /* ===== HERO ===== */
+  #hero{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    overflow:hidden;
+    padding:120px 0 80px;
+  }
+  #helix-canvas{
+    position:absolute;
+    inset:0;
+    width:100%;height:100%;
+    z-index:0;
+    opacity:.9;
+  }
+  #hero .wrap{position:relative;z-index:2;}
+  .hero-prompt{
+    font-family:var(--mono);
+    font-size:14px;
+    color:var(--subtext);
+    margin-bottom:34px;
+  }
+  .hero-prompt .accent{color:var(--accent);}
+  #hero h1{
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:clamp(2.2rem,6vw,4.6rem);
+    line-height:1.06;
+    letter-spacing:-0.02em;
+    margin:18px 0 26px;
+    color:var(--text);
+    max-width:21ch;
+  }
+  #hero h1 .ch{display:inline-block;white-space:pre;}
+  #hero .hero-sub{
+    font-family:var(--mono);
+    font-size:clamp(1rem,2.2vw,1.35rem);
+    color:var(--accent);
+    letter-spacing:.02em;
+  }
+  .hero-eyebrow-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .hero-eyebrow-row .tickline{
+    height:1px;flex:1;min-width:40px;
+    background:linear-gradient(90deg,var(--surface1),transparent);
+    transform-origin:left center;
+  }
+  .hero-echo{
+    display:flex;align-items:center;gap:10px;
+    margin-top:18px;
+    font-size:13px;
+    letter-spacing:.16em;
+    color:var(--subtext);
+    text-transform:lowercase;
+  }
+  .hero-echo .echo-graph{display:inline-flex;opacity:.85;}
+  .hero-echo .echo-text{min-height:1em;}
+
+  .scrollcue{
+    position:absolute;
+    bottom:30px;left:50%;
+    transform:translateX(-50%);
+    z-index:3;
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.18em;
+    color:var(--subtext);
+    text-transform:uppercase;
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+  }
+  .scrollcue .arrow{font-size:20px;animation:bob 1.8s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
+
+  /* ===== MISSION ===== */
+  #mission{padding:110px 0;}
+  .mission-panel{padding:40px clamp(20px,4vw,56px);}
+  .mission-head{
+    font-family:var(--mono);
+    font-size:13px;color:var(--subtext);
+    margin-bottom:24px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .mission-head .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);}
+
+  .mission-readout{position:relative;}
+
+  /* HOOK — two heavy lines, the two pillars */
+  .mission-hook{
+    font-family:var(--sans);
+    font-weight:900;
+    font-size:clamp(1.9rem,5.4vw,3.4rem);
+    line-height:1.12;
+    letter-spacing:-0.02em;
+    color:var(--text);
+    margin-bottom:26px;
+  }
+  .mission-hook .hk-line{display:block;}
+  .pillar{
+    display:inline-block;
+    color:var(--accent);
+    font-weight:900;
+    background:rgba(137,180,250,0.08);
+    border:1px solid var(--surface1);
+    border-radius:5px;
+    padding:0 .22em;
+    white-space:pre;
+  }
+
+  /* LINK — thin accent line drawn between the two pillars */
+  .mission-link{
+    position:absolute;
+    pointer-events:none;
+    overflow:visible;
+    z-index:1;
+  }
+
+  /* RESOLUTION paragraph */
+  .mission-resolve{
+    position:relative;
+    z-index:2;
+    font-family:var(--sans);
+    font-weight:300;
+    font-size:clamp(1.1rem,2.4vw,1.5rem);
+    line-height:1.5;
+    color:var(--subtext);
+    max-width:46ch;
+    margin-top:6px;
+  }
+  .mission-resolve em{
+    font-style:normal;
+    font-weight:600;
+    color:var(--accent);
+  }
+
+  .pillar .ch,.resolve-fuse .ch{display:inline-block;white-space:pre;}
+
+  /* ===== RESEARCH ===== */
+  #research{padding:90px 0 110px;}
+  .sec-title{
+    font-size:clamp(1.8rem,4vw,2.8rem);
+    font-weight:900;
+    letter-spacing:-0.02em;
+    margin-bottom:8px;
+  }
+  .sec-title em{font-style:normal;color:var(--accent);}
+  .modules{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:22px;
+    margin-top:42px;
+  }
+  .module{
+    padding:28px 26px 26px;
+    position:relative;
+    overflow:hidden;
+  }
+  .module .drawline{
+    position:absolute;top:0;left:0;height:2px;width:100%;
+    background:var(--accent);
+    transform:scaleX(0);
+    transform-origin:left center;
+  }
+  .module .idx{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--accent);
+    letter-spacing:.08em;
+  }
+  .module h3{
+    font-size:1.32rem;
+    font-weight:700;
+    margin:8px 0 14px;
+    line-height:1.25;
+  }
+  .module .q{
+    font-family:var(--mono);
+    font-size:.92rem;
+    color:var(--accent);
+    line-height:1.5;
+    margin-bottom:14px;
+    padding-left:14px;
+    border-left:2px solid var(--surface1);
+  }
+  .module p.desc{
+    font-size:.96rem;
+    color:var(--subtext);
+    margin-bottom:18px;
+  }
+  .chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--text);
+    background:rgba(137,180,250,0.08);
+    border:1px solid var(--surface1);
+    padding:5px 10px;
+    border-radius:4px;
+    letter-spacing:.01em;
+  }
+  .chip::before{content:"▸ ";color:var(--accent);}
+
+  /* ===== STATS ===== */
+  #stats{padding:90px 0;border-top:1px solid var(--surface1);border-bottom:1px solid var(--surface1);}
+  .telemetry-label{
+    font-family:var(--mono);font-size:13px;color:var(--subtext);
+    margin-bottom:36px;display:flex;align-items:center;gap:10px;
+  }
+  .telemetry-label .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.6s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:.4;transform:scale(.8);}50%{opacity:1;transform:scale(1.2);}}
+  .stats-row{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:24px;
+  }
+  .stat{padding:22px 20px;}
+  .stat .spark{
+    display:flex;align-items:flex-end;gap:4px;height:42px;margin-bottom:18px;
+  }
+  .stat .spark span{
+    flex:1;
+    background:linear-gradient(180deg,var(--accent),rgba(137,180,250,0.25));
+    border-radius:2px 2px 0 0;
+    transform:scaleY(0);
+    transform-origin:bottom center;
+    min-height:3px;
+  }
+  .stat .num{
+    font-family:var(--mono);
+    font-size:clamp(2rem,5vw,3rem);
+    font-weight:700;
+    color:var(--text);
+    line-height:1;
+  }
+  .stat .cap{
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:var(--subtext);
+    letter-spacing:.04em;
+    margin-top:10px;
+    text-transform:uppercase;
+  }
+
+  /* ===== PUBLICATIONS ===== */
+  #publications{padding:100px 0;}
+  .pub-list{margin-top:38px;border-top:1px solid var(--surface1);}
+  .pub-row{
+    display:grid;
+    grid-template-columns:34px 1fr auto;
+    gap:20px;
+    align-items:start;
+    padding:22px 8px;
+    border-bottom:1px solid var(--surface1);
+    transition:background .25s;
+  }
+  .pub-row:hover{background:rgba(137,180,250,0.04);}
+  .pub-row .pidx{font-family:var(--mono);font-size:12px;color:var(--accent);padding-top:4px;}
+  .pub-row .ptitle{font-size:1.04rem;font-weight:500;line-height:1.4;color:var(--text);}
+  .pub-row .pmeta{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--subtext);
+    white-space:nowrap;
+    text-align:right;
+    background:rgba(137,180,250,0.06);
+    border:1px solid var(--surface1);
+    padding:6px 10px;
+    border-radius:4px;
+    align-self:start;
+  }
+
+  /* ===== PI ===== */
+  #pi{padding:100px 0;}
+  .pi-grid{
+    display:grid;
+    grid-template-columns:300px 1fr;
+    gap:48px;
+    align-items:start;
+    margin-top:38px;
+  }
+  .pi-photo{
+    position:relative;
+    aspect-ratio:1/1;
+    background:var(--surface);
+    overflow:hidden;
+  }
+  .pi-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+  .pi-photo .fallback{
+    position:absolute;inset:0;display:grid;place-items:center;
+    font-family:var(--mono);color:var(--subtext);font-size:13px;
+    text-align:center;padding:20px;
+  }
+  .pi-photo .scanbar{
+    position:absolute;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);
+    top:0;opacity:.7;
+  }
+  .pi-name{font-size:1.9rem;font-weight:900;letter-spacing:-0.02em;}
+  .pi-title{font-family:var(--mono);font-size:.95rem;color:var(--accent);margin:6px 0 22px;}
+  .pi-bio{color:var(--subtext);font-size:1.02rem;max-width:60ch;margin-bottom:18px;}
+  /* current-status "live record" block */
+  .pi-now{
+    position:relative;
+    overflow:hidden;
+    max-width:60ch;
+    padding:14px 18px;
+    border:1px solid var(--surface1);
+    border-left:2px solid var(--accent);
+    border-radius:0 6px 6px 0;
+    background:linear-gradient(90deg, rgba(137,180,250,0.09), rgba(137,180,250,0.02));
+  }
+  .pi-now-badge{
+    display:inline-flex;align-items:center;gap:7px;
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:9px;
+  }
+  .pi-now-badge .pulse{
+    width:7px;height:7px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 8px var(--accent);
+    animation:pulse 1.6s ease-in-out infinite;
+  }
+  .pi-now p{margin:0;color:var(--text);font-size:1.02rem;}
+  .pi-now .accent{color:var(--accent);font-weight:500;}
+  .pi-now-sweep{
+    position:absolute;top:0;bottom:0;width:42%;
+    pointer-events:none;opacity:0;
+    background:linear-gradient(90deg, transparent, rgba(137,180,250,0.16), transparent);
+  }
+
+  /* ===== CONTACT / FOOTER ===== */
+  #contact{padding:110px 0 60px;border-top:1px solid var(--surface1);}
+  .contact-head{
+    font-size:clamp(1.8rem,4.6vw,3.2rem);
+    font-weight:300;
+    line-height:1.2;
+    letter-spacing:-0.01em;
+    max-width:20ch;
+    margin-bottom:40px;
+  }
+  .contact-head em{font-style:normal;color:var(--accent);font-weight:500;}
+  .contact-grid{display:flex;flex-wrap:wrap;gap:48px;margin-bottom:60px;}
+  .contact-item .k{font-family:var(--mono);font-size:12px;color:var(--subtext);text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px;}
+  .contact-item .v{font-family:var(--mono);font-size:1.05rem;color:var(--text);}
+  .contact-item a.v:hover{color:var(--accent);}
+  footer{
+    padding-top:28px;
+    border-top:1px solid var(--surface1);
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--subtext);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  }
+  footer .accent{color:var(--accent);}
+
+  /* generic reveal init state (JS overrides) */
+  .reveal{opacity:0;}
+
+  /* ===== Responsive ===== */
+  @media (max-width:799px){
+    .modules{grid-template-columns:1fr;}
+    .stats-row{grid-template-columns:repeat(2,1fr);}
+    .pub-row{grid-template-columns:1fr;gap:8px;}
+    .pub-row .pmeta{text-align:left;justify-self:start;white-space:normal;}
+    .pi-grid{grid-template-columns:1fr;gap:28px;}
+    .pi-photo{max-width:260px;}
+    .contact-grid{gap:28px;}
+  }
+  @media (max-width:480px){
+    .stats-row{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+  <!-- ===== HERO ===== -->
+  <section id="hero">
+    <canvas id="helix-canvas" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <div class="hero-prompt mono"><span class="accent">&gt;</span> cc_lab --init<span class="cursor" aria-hidden="true"></span></div>
+      <div class="hero-eyebrow-row">
+        <span class="eyebrow">CC LAB @ XJTLU</span>
+        <span class="tickline" data-tick></span>
+      </div>
+      <h1 id="headline" data-text="Molecules in motion, medicine by design."></h1>
+      <p class="hero-sub mono">Towards Physics-inspired Bioinformatics</p>
+      <p class="hero-echo mono" aria-label="sequence to structure">
+        <span class="echo-graph" aria-hidden="true">
+          <svg viewBox="0 0 40 40" width="40" height="40">
+            <g class="echo-edges" stroke="var(--surface1)" stroke-width="1" fill="none">
+              <line x1="20" y1="8" x2="32" y2="18"/>
+              <line x1="32" y1="18" x2="27" y2="32"/>
+              <line x1="27" y1="32" x2="13" y2="32"/>
+              <line x1="13" y1="32" x2="8" y2="18"/>
+              <line x1="8" y1="18" x2="20" y2="8"/>
+              <line x1="20" y1="8" x2="20" y2="22"/>
+              <line x1="20" y1="22" x2="27" y2="32"/>
+            </g>
+            <g class="echo-nodes" fill="var(--accent)">
+              <circle cx="20" cy="8" r="2"/><circle cx="32" cy="18" r="2"/>
+              <circle cx="27" cy="32" r="2"/><circle cx="13" cy="32" r="2"/>
+              <circle cx="8" cy="18" r="2"/><circle cx="20" cy="22" r="2"/>
+            </g>
+          </svg>
+        </span>
+        <span class="echo-text" data-echo="sequence &#8646; structure &#8646; dynamics"></span>
+      </p>
+    </div>
+    <div class="scrollcue mono">
+      <span>scroll</span>
+      <span class="arrow material-symbols-outlined">arrow_downward</span>
+    </div>
+  </section>
+
+  <!-- ===== MISSION ===== -->
+  <section id="mission">
+    <div class="wrap">
+      <div class="hud mission-panel">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <div class="mission-head mono"><span class="dot"></span> // mission.txt</div>
+
+        <div class="mission-readout">
+          <p class="mission-hook">
+            <span class="hk-line">Sequence is <span class="pillar mono" id="pillarLang" data-text="language">language</span>.</span>
+            <span class="hk-line">Structure is <span class="pillar mono" id="pillarPhys" data-text="physics">physics</span>.</span>
+          </p>
+
+          <svg class="mission-link" id="missionLink" aria-hidden="true" preserveAspectRatio="none">
+            <path class="ml-path" id="missionLinkPath" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+          </svg>
+
+          <p class="mission-resolve">We <em class="resolve-fuse" id="resolveFuse" data-text="fuse">fuse</em> biological foundation models with molecular dynamics to decode molecular mechanisms and engineer next-generation therapeutics.</p>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RESEARCH ===== -->
+  <section id="research">
+    <div class="wrap">
+      <div class="seclabel mono reveal">// research_directions.map</div>
+      <h2 class="sec-title reveal">Four lines of inquiry, <em>one intersection</em>.</h2>
+
+      <div class="modules">
+        <article class="module hud">
+          <span class="drawline"></span>
+          <span class="corner tl"></span><span class="corner br"></span>
+          <div class="idx mono">[01] · structural_fm</div>
+          <h3>Structural Bioinformatics &amp; Foundation Models</h3>
+          <p class="q mono">How can we decode the language of protein structure and function at scale?</p>
+          <p class="desc">Reading the grammar of proteins from evolutionary-scale data to infer function and design molecules.</p>
+          <div class="chips">
+            <span class="chip">Protein structure &amp; function prediction</span>
+            <span class="chip">Biological sequence foundation models</span>
+            <span class="chip">Structure-informed generative design</span>
+          </div>
+        </article>
+
+        <article class="module hud">
+          <span class="drawline"></span>
+          <span class="corner tl"></span><span class="corner br"></span>
+          <div class="idx mono">[02] · biophysics_md</div>
+          <h3>Computational Biophysics &amp; Molecular Dynamics</h3>
+          <p class="q mono">How do molecular motions govern biological function and drug action?</p>
+          <p class="desc">Putting proteins in motion to expose the hidden states, allosteric switches, and binding energetics.</p>
+          <div class="chips">
+            <span class="chip">MD simulation &amp; enhanced sampling</span>
+            <span class="chip">Allostery &amp; conformational dynamics</span>
+            <span class="chip">Binding free energy calculations</span>
+          </div>
+        </article>
+
+        <article class="module hud">
+          <span class="drawline"></span>
+          <span class="corner tl"></span><span class="corner br"></span>
+          <div class="idx mono">[03] · precision_med</div>
+          <h3>Precision Medicine &amp; Immunotherapy</h3>
+          <p class="q mono">How can we tailor therapies to individual molecular and genomic profiles?</p>
+          <p class="desc">Reading each individual's molecular profile to identify patient-specific vulnerabilities and predict treatment response.</p>
+          <div class="chips">
+            <span class="chip">Neoantigen prediction &amp; vaccine design</span>
+            <span class="chip">Treatment response &amp; patient stratification</span>
+            <span class="chip">mRNA therapeutics optimization</span>
+          </div>
+        </article>
+
+        <article class="module hud">
+          <span class="drawline"></span>
+          <span class="corner tl"></span><span class="corner br"></span>
+          <div class="idx mono">[04] · dynamics_dd</div>
+          <h3>Dynamics-Based Drug Discovery</h3>
+          <p class="q mono">How can we exploit protein dynamics and targeted protein degradation to find next-generation therapeutics?</p>
+          <p class="desc">Drugging the "undruggable" by opening transient pockets and recruiting the cell's own machinery to destroy disease targets.</p>
+          <div class="chips">
+            <span class="chip">Cryptic pocket &amp; allosteric drug discovery</span>
+            <span class="chip">Molecular glues &amp; targeted protein degradation</span>
+            <span class="chip">PROTAC &amp; bifunctional molecule design</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== STATS ===== -->
+  <section id="stats">
+    <div class="wrap">
+      <div class="telemetry-label mono"><span class="pulse"></span> // telemetry.stream</div>
+      <div class="stats-row">
+        <div class="stat hud">
+          <span class="corner tl"></span><span class="corner br"></span>
+          <div class="spark" data-spark><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="num"><span class="count" data-count="36" data-suffix="+">0</span></div>
+          <div class="cap">Publications</div>
+        </div>
+        <div class="stat hud">
+          <span class="corner tl"></span><span class="corner br"></span>
+          <div class="spark" data-spark><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="num"><span class="count" data-count="20" data-suffix="+">0</span></div>
+          <div class="cap">Team members</div>
+        </div>
+        <div class="stat hud">
+          <span class="corner tl"></span><span class="corner br"></span>
+          <div class="spark" data-spark><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="num"><span class="count" data-count="10" data-suffix="+">0</span></div>
+          <div class="cap">Alumni</div>
+        </div>
+        <div class="stat hud">
+          <span class="corner tl"></span><span class="corner br"></span>
+          <div class="spark" data-spark><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="num"><span class="count" data-count="10" data-suffix="">0</span></div>
+          <div class="cap">Years of research</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PUBLICATIONS ===== -->
+  <section id="publications">
+    <div class="wrap">
+      <div class="seclabel mono reveal">// publications.log</div>
+      <h2 class="sec-title reveal">Selected Publications</h2>
+      <div class="pub-list" id="pubList">
+        <div class="pub-row">
+          <div class="pidx mono">001</div>
+          <div class="ptitle">Polymer–mRNA complexes for monocyte-trafficked, lymph node-targeted cancer vaccination</div>
+          <div class="pmeta">Nature Biomedical Engineering · May 2026</div>
+        </div>
+        <div class="pub-row">
+          <div class="pidx mono">002</div>
+          <div class="ptitle">Inhibition of VEGF165-Induced Angiogenesis by Gold Nanoparticles through HQGQH as the Primary Binding Site</div>
+          <div class="pmeta">J. Chem. Inf. Model. · May 2026</div>
+        </div>
+        <div class="pub-row">
+          <div class="pidx mono">003</div>
+          <div class="ptitle">Leveraging a naturally occurring IgM autoantibody to target diabetogenic T cells</div>
+          <div class="pmeta">The Journal of Immunology · Apr 2026</div>
+        </div>
+        <div class="pub-row">
+          <div class="pidx mono">004</div>
+          <div class="ptitle">Decoding TCR recognition via geometric deep learning of immunological fingerprints</div>
+          <div class="pmeta">Briefings in Bioinformatics · Mar 2026</div>
+        </div>
+        <div class="pub-row">
+          <div class="pidx mono">005</div>
+          <div class="ptitle">Multi-strategy embedded framework for neoantigen vaccine maturation</div>
+          <div class="pmeta">Scientific Reports · Jan 2026</div>
+        </div>
+        <div class="pub-row">
+          <div class="pidx mono">006</div>
+          <div class="ptitle">Genomic signatures associated with the evolutionary loss of egg yolk in parasitoid wasps</div>
+          <div class="pmeta">PNAS · Apr 2025</div>
+        </div>
+        <div class="pub-row">
+          <div class="pidx mono">007</div>
+          <div class="ptitle">Structural basis of BAM-mediated outer membrane β-barrel protein assembly</div>
+          <div class="pmeta">Nature · 2023</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PI ===== -->
+  <section id="pi">
+    <div class="wrap">
+      <div class="seclabel mono reveal">// pi.profile</div>
+      <h2 class="sec-title reveal">Principal Investigator</h2>
+      <div class="pi-grid">
+        <div class="pi-photo hud reveal">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="scanbar" id="piScan"></div>
+          <div class="fallback">[ cc.jpg ]<br>image unavailable</div>
+          <img src="assets/images/people/cc.jpg" alt="Kevin Chan, Principal Investigator"
+               onload="this.previousElementSibling.style.display='none'"
+               onerror="this.style.display='none'" />
+        </div>
+        <div>
+          <div class="pi-name reveal">Kevin Chan, PhD</div>
+          <div class="pi-title mono reveal">Assistant Professor</div>
+          <p class="pi-bio reveal">Kevin received his PhD from City University of Hong Kong and completed postdoctoral training at The Ohio State University. He was then at Zhejiang University developing biologics for immunotherapies.</p>
+          <div class="pi-now reveal">
+            <span class="pi-now-sweep" aria-hidden="true"></span>
+            <span class="pi-now-badge mono"><span class="pulse"></span> now</span>
+            <p>In <span id="piNowYear" class="accent">2024</span>, he joined Department of Biosciences and Bioinformatics, <span class="accent">XJTLU</span>. He is now also the <span class="accent">deputy director</span> of the Center for Intelligent RNA Therapeutics at XJTLU.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT / FOOTER ===== -->
+  <section id="contact">
+    <div class="wrap">
+      <div class="seclabel mono reveal">// get_in_touch</div>
+      <h2 class="contact-head reveal">Meet at the <em>interface</em> of computation and biology.</h2>
+      <div class="contact-grid">
+        <div class="contact-item reveal">
+          <div class="k">Email</div>
+          <a class="v" href="mailto:Chun.Chan@xjtlu.edu.cn">Chun.Chan@xjtlu.edu.cn</a>
+        </div>
+        <div class="contact-item reveal">
+          <div class="k">Office</div>
+          <div class="v">Office 463, Science Building, SIP</div>
+        </div>
+      </div>
+      <footer>
+        <span><span class="accent">&gt;</span> CC Lab · Xi'an Jiaotong-Liverpool University · School of Science</span>
+        <span class="mono">eof<span class="cursor" aria-hidden="true" style="height:.9em;"></span></span>
+      </footer>
+    </div>
+  </section>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+  <script>
+  (function(){
+    "use strict";
+
+    if(!window.gsap){return;}
+    gsap.registerPlugin(ScrollTrigger);
+
+    var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* ---------- helper: split text into per-char spans ---------- */
+    function splitChars(el){
+      var text = el.getAttribute("data-text") || el.textContent;
+      el.textContent = "";
+      var spans = [];
+      for(var i=0;i<text.length;i++){
+        var s = document.createElement("span");
+        s.className = "ch";
+        s.textContent = text[i];
+        s.dataset.final = text[i];
+        el.appendChild(s);
+        spans.push(s);
+      }
+      return spans;
+    }
+
+    /* ---------- HERO: DNA double-helix canvas ---------- */
+    var helixCleanup = null;
+    function startHelix(density){
+      var canvas = document.getElementById("helix-canvas");
+      if(!canvas) return;
+      var ctx = canvas.getContext("2d");
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var W=0,H=0;
+      function resize(){
+        W = canvas.clientWidth; H = canvas.clientHeight;
+        canvas.width = W*dpr; canvas.height = H*dpr;
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+      }
+      resize();
+      window.addEventListener("resize", resize);
+
+      // build helix node set
+      var nodes = density;            // pairs along the strand
+      var amplitude = Math.min(W*0.18, 220);
+      var t0 = performance.now();
+      var raf;
+
+      function rgba(a){ return "rgba(137,180,250,"+a+")"; }
+      var subColor = "rgba(166,173,200,";
+
+      function draw(now){
+        var t = (now - t0)/1000;
+        ctx.clearRect(0,0,W,H);
+        var cx = W*0.72;                 // helix sits right side
+        if(W < 800) cx = W*0.5;
+        var spanH = H*0.96;
+        var top = H*0.02;
+
+        var pts1=[], pts2=[];
+        for(var i=0;i<nodes;i++){
+          var p = i/(nodes-1);
+          var y = top + p*spanH;
+          var phase = p*Math.PI*4 + t*0.9;
+          var x1 = cx + Math.sin(phase)*amplitude;
+          var x2 = cx + Math.sin(phase + Math.PI)*amplitude;
+          var depth1 = (Math.cos(phase)+1)/2;     // 0..1 front/back
+          var depth2 = (Math.cos(phase+Math.PI)+1)/2;
+          pts1.push({x:x1,y:y,d:depth1});
+          pts2.push({x:x2,y:y,d:depth2});
+        }
+
+        // rungs (base pairs)
+        for(var j=0;j<nodes;j++){
+          var a = pts1[j], b = pts2[j];
+          var rung = Math.min(a.d,b.d);
+          ctx.strokeStyle = subColor + (0.07 + rung*0.16) + ")";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(a.x,a.y);
+          ctx.lineTo(b.x,b.y);
+          ctx.stroke();
+        }
+
+        // backbone dots
+        function plot(pts){
+          for(var k=0;k<pts.length;k++){
+            var pt = pts[k];
+            var r = 1.6 + pt.d*3.2;
+            ctx.beginPath();
+            ctx.fillStyle = rgba(0.18 + pt.d*0.7);
+            ctx.arc(pt.x,pt.y,r,0,Math.PI*2);
+            ctx.fill();
+          }
+        }
+        plot(pts1);
+        plot(pts2);
+
+        raf = requestAnimationFrame(draw);
+      }
+      raf = requestAnimationFrame(draw);
+
+      // static single frame for reduced motion
+      if(reduceMotion){
+        cancelAnimationFrame(raf);
+        draw(t0 + 600);
+      }
+
+      helixCleanup = function(){
+        cancelAnimationFrame(raf);
+        window.removeEventListener("resize", resize);
+      };
+    }
+
+    /* ---------- HEADLINE decode/scramble ---------- */
+    var GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%*/<>{}[]=+";
+    function decodeHeadline(spans){
+      var n = spans.length;
+      var progress = { v:0 };
+      gsap.to(progress, {
+        v:1,
+        duration:1.9,
+        ease:"power2.out",
+        delay:0.35,
+        onUpdate:function(){
+          var settled = Math.floor(progress.v * n);
+          for(var i=0;i<n;i++){
+            var sp = spans[i];
+            var fin = sp.dataset.final;
+            if(fin === " "){ sp.textContent = " "; continue; }
+            if(i < settled){
+              if(sp.textContent !== fin) sp.textContent = fin;
+            } else {
+              // scramble unsettled chars
+              if(Math.random() > 0.35){
+                sp.textContent = GLYPHS[(Math.random()*GLYPHS.length)|0];
+              }
+            }
+          }
+        },
+        onComplete:function(){
+          for(var i=0;i<n;i++){ spans[i].textContent = spans[i].dataset.final; }
+        }
+      });
+    }
+
+    /* ---------- generic capped scramble decode for a span-split element ---------- */
+    function decodeSpans(spans, opts){
+      opts = opts || {};
+      var n = spans.length;
+      var progress = { v:0 };
+      gsap.to(progress, {
+        v:1,
+        duration:opts.duration || 0.9,
+        ease:"power2.out",
+        delay:opts.delay || 0,
+        onUpdate:function(){
+          var settled = Math.floor(progress.v * n);
+          for(var i=0;i<n;i++){
+            var sp = spans[i];
+            var fin = sp.dataset.final;
+            if(fin === " "){ sp.textContent = " "; continue; }
+            if(i < settled){
+              if(sp.textContent !== fin) sp.textContent = fin;
+            } else if(Math.random() > 0.4){
+              sp.textContent = GLYPHS[(Math.random()*GLYPHS.length)|0];
+            }
+          }
+        },
+        onComplete:function(){
+          for(var i=0;i<n;i++){ spans[i].textContent = spans[i].dataset.final; }
+          if(opts.onComplete) opts.onComplete();
+        }
+      });
+    }
+
+    /* ---------- MISSION: draw the accent link between the two pillars ---------- */
+    // positions the inline SVG over the readout and lays out a path from the
+    // "language" pillar to the "physics" pillar; returns the path length so the
+    // caller can drive a stroke-dashoffset draw-on.
+    function layoutMissionLink(){
+      var svg  = document.getElementById("missionLink");
+      var path = document.getElementById("missionLinkPath");
+      var lang = document.getElementById("pillarLang");
+      var phys = document.getElementById("pillarPhys");
+      var host = svg && svg.parentNode;
+      if(!svg || !path || !lang || !phys || !host) return 0;
+
+      var hostRect = host.getBoundingClientRect();
+      var lr = lang.getBoundingClientRect();
+      var pr = phys.getBoundingClientRect();
+
+      svg.style.left   = "0px";
+      svg.style.top    = "0px";
+      svg.style.width  = hostRect.width + "px";
+      svg.style.height = hostRect.height + "px";
+      svg.setAttribute("viewBox", "0 0 " + hostRect.width + " " + hostRect.height);
+
+      // anchor at the right edge of "language" and the right edge of "physics"
+      var x1 = lr.right - hostRect.left;
+      var y1 = lr.top + lr.height/2 - hostRect.top;
+      var x2 = pr.right - hostRect.left;
+      var y2 = pr.top + pr.height/2 - hostRect.top;
+      var bow = Math.max(28, (x1 + x2) * 0.18); // bow out to the right
+
+      var d = "M" + x1 + "," + y1 +
+              " C" + (x1 + bow) + "," + y1 +
+              " " + (x2 + bow) + "," + y2 +
+              " " + x2 + "," + y2;
+      path.setAttribute("d", d);
+      return path.getTotalLength();
+    }
+    function setMissionLink(len, drawn){
+      var path = document.getElementById("missionLinkPath");
+      if(!path) return;
+      path.style.strokeDasharray = len;
+      path.style.strokeDashoffset = drawn ? 0 : len;
+    }
+
+    /* ---------- counters ---------- */
+    function runCounter(el){
+      var target = parseFloat(el.getAttribute("data-count"));
+      var suffix = el.getAttribute("data-suffix") || "";
+      var obj = { v:0 };
+      gsap.to(obj, {
+        v:target,
+        duration:1.6,
+        ease:"power2.out",
+        onUpdate:function(){ el.textContent = Math.round(obj.v) + suffix; },
+        onComplete:function(){ el.textContent = target + suffix; }
+      });
+    }
+
+    /* =====================================================
+       matchMedia: desktop / mobile / reduced-motion
+    ===================================================== */
+    var headline = document.getElementById("headline");
+    var headlineSpans = splitChars(headline);
+
+    // MISSION readout split-targets (pillars, fuse)
+    var pillarLangEl = document.getElementById("pillarLang");
+    var pillarPhysEl = document.getElementById("pillarPhys");
+    var resolveFuseEl = document.getElementById("resolveFuse");
+    var pillarLangSpans = pillarLangEl ? splitChars(pillarLangEl) : [];
+    var pillarPhysSpans = pillarPhysEl ? splitChars(pillarPhysEl) : [];
+    var resolveFuseSpans = resolveFuseEl ? splitChars(resolveFuseEl) : [];
+
+    function settleSpans(spans){
+      spans.forEach(function(s){ s.textContent = s.dataset.final; });
+    }
+
+    // hero echo: decode "sequence ⇄ structure" once
+    var echoEl = document.querySelector(".echo-text");
+    function setEchoFinal(){
+      if(echoEl) echoEl.textContent = echoEl.getAttribute("data-echo") || "";
+    }
+    function decodeEcho(){
+      if(!echoEl) return;
+      var fin = echoEl.getAttribute("data-echo") || "";
+      var prog = { v:0 };
+      gsap.to(prog, {
+        v:1, duration:1.2, ease:"power2.out", delay:2.1,
+        onUpdate:function(){
+          var settled = Math.floor(prog.v * fin.length);
+          var out = "";
+          for(var i=0;i<fin.length;i++){
+            var c = fin[i];
+            if(c === " " || c === "⇄" || i < settled){ out += c; }
+            else { out += GLYPHS[(Math.random()*GLYPHS.length)|0]; }
+          }
+          echoEl.textContent = out;
+        },
+        onComplete:setEchoFinal
+      });
+    }
+
+    var mm = gsap.matchMedia();
+
+    /* ---- REDUCED MOTION: settle everything immediately ---- */
+    mm.add("(prefers-reduced-motion: reduce)", function(){
+      settleSpans(headlineSpans);
+      setEchoFinal();
+      gsap.set(".reveal", {opacity:1, y:0});
+      gsap.set(".module .drawline", {scaleX:1});
+      gsap.set(".stat .spark span", {scaleY:0.6});
+      gsap.set("[data-tick]", {scaleX:1});
+      document.querySelectorAll(".count").forEach(function(c){
+        c.textContent = c.getAttribute("data-count") + (c.getAttribute("data-suffix")||"");
+      });
+      // mission: final settled state (hook + link drawn + resolution)
+      settleSpans(pillarLangSpans);
+      settleSpans(pillarPhysSpans);
+      settleSpans(resolveFuseSpans);
+      gsap.set(".mission-hook, .mission-resolve", {autoAlpha:1, y:0});
+      setMissionLink(layoutMissionLink(), true);
+      startHelix(34); // single static frame inside startHelix
+    });
+
+    /* ---- FULL MOTION (desktop) ---- */
+    mm.add("(min-width: 800px) and (prefers-reduced-motion: no-preference)", function(){
+      buildAnimations(70, true);
+    });
+
+    /* ---- MOBILE (lighter) ---- */
+    mm.add("(max-width: 799px) and (prefers-reduced-motion: no-preference)", function(){
+      buildAnimations(40, false);
+    });
+
+    function buildAnimations(helixDensity, fullGesture){
+      startHelix(helixDensity);
+
+      // hero entrance
+      gsap.from(".hero-prompt", {opacity:0, y:14, duration:.7, ease:"power2.out"});
+      gsap.from(".hero-eyebrow-row .eyebrow", {opacity:0, y:14, duration:.7, delay:.15, ease:"power2.out"});
+      gsap.fromTo("[data-tick]", {scaleX:0}, {scaleX:1, duration:1, delay:.3, ease:"power2.out"});
+      gsap.from(".hero-sub", {opacity:0, y:14, duration:.7, delay:1.9, ease:"power2.out"});
+      decodeHeadline(headlineSpans);
+      gsap.from(".hero-echo", {opacity:0, y:10, duration:.7, delay:2.0, ease:"power2.out"});
+      decodeEcho();
+      gsap.from(".scrollcue", {opacity:0, duration:1, delay:2.4, ease:"power1.out"});
+
+      // MISSION — kinetic fusion readout
+      buildMission(fullGesture);
+
+      // RESEARCH section labels
+      gsap.fromTo("#research .reveal", {opacity:0, y:20}, {
+        opacity:1, y:0, duration:.6, stagger:.1, ease:"power2.out",
+        scrollTrigger:{ trigger:"#research", start:"top 75%" }
+      });
+      // modules
+      gsap.utils.toArray(".module").forEach(function(mod, i){
+        var tl = gsap.timeline({
+          scrollTrigger:{ trigger:mod, start:"top 82%" }
+        });
+        tl.from(mod, {opacity:0, y:30, duration:.6, ease:"power2.out"})
+          .fromTo(mod.querySelector(".drawline"), {scaleX:0}, {scaleX:1, duration:.7, ease:"none"}, "-=0.3")
+          .from(mod.querySelectorAll(".chip"), {opacity:0, y:8, duration:.4, stagger:.06, ease:"power1.out"}, "-=0.2");
+      });
+
+      // STATS
+      gsap.from("#stats .telemetry-label", {
+        opacity:0, x:-12, duration:.6, ease:"power2.out",
+        scrollTrigger:{ trigger:"#stats", start:"top 78%" }
+      });
+      gsap.utils.toArray(".stat").forEach(function(stat){
+        var bars = stat.querySelectorAll("[data-spark] span");
+        var heights = [];
+        bars.forEach(function(){ heights.push(0.25 + Math.random()*0.75); });
+        var tl = gsap.timeline({
+          scrollTrigger:{
+            trigger:stat, start:"top 85%",
+            onEnter:function(){
+              var c = stat.querySelector(".count");
+              if(c && !c.dataset.done){ c.dataset.done="1"; runCounter(c); }
+            }
+          }
+        });
+        tl.from(stat, {opacity:0, y:24, duration:.6, ease:"power2.out"});
+        bars.forEach(function(bar,bi){
+          gsap.fromTo(bar, {scaleY:0}, {
+            scaleY:heights[bi], duration:.6, ease:"none",
+            scrollTrigger:{ trigger:stat, start:"top 85%" },
+            delay:bi*0.05
+          });
+        });
+      });
+
+      // PUBLICATIONS
+      gsap.fromTo("#publications .reveal", {opacity:0, y:20}, {
+        opacity:1, y:0, duration:.6, stagger:.1, ease:"power2.out",
+        scrollTrigger:{ trigger:"#publications", start:"top 78%" }
+      });
+      gsap.from(".pub-row", {
+        opacity:0, x:-18, duration:.5, stagger:.08, ease:"power2.out",
+        scrollTrigger:{ trigger:"#pubList", start:"top 80%" }
+      });
+
+      // PI
+      gsap.fromTo("#pi .reveal", {opacity:0, y:24}, {
+        opacity:1, y:0, duration:.6, stagger:.08, ease:"power2.out",
+        scrollTrigger:{ trigger:"#pi", start:"top 75%" }
+      });
+      // PI scanbar sweep
+      gsap.fromTo("#piScan", {top:"0%", opacity:0}, {
+        top:"100%", opacity:1, duration:1.4, ease:"power1.inOut",
+        scrollTrigger:{ trigger:"#pi", start:"top 70%" },
+        onComplete:function(){ gsap.to("#piScan",{opacity:0,duration:.4}); }
+      });
+      // PI current-status: highlight sweep + decode the year
+      var piNowYearEl = document.getElementById("piNowYear");
+      var piNowYearSpans = piNowYearEl ? splitChars(piNowYearEl) : [];
+      ScrollTrigger.create({
+        trigger:"#pi", start:"top 66%", once:true,
+        onEnter:function(){
+          var sweep = document.querySelector(".pi-now-sweep");
+          if(sweep){
+            gsap.fromTo(sweep, {left:"-45%", opacity:1}, {
+              left:"105%", duration:1.1, ease:"power2.inOut", delay:.25,
+              onComplete:function(){ gsap.set(sweep,{opacity:0}); }
+            });
+          }
+          decodeSpans(piNowYearSpans, {duration:.7, delay:.3});
+        }
+      });
+
+      // CONTACT
+      gsap.fromTo("#contact .reveal", {opacity:0, y:24}, {
+        opacity:1, y:0, duration:.6, stagger:.1, ease:"power2.out",
+        scrollTrigger:{ trigger:"#contact", start:"top 80%" }
+      });
+    }
+
+    /* ---------- MISSION: kinetic "fusion" readout (play-on-enter) ---------- */
+    function buildMission(fullGesture){
+      // head + tag reveal
+      gsap.from(".mission-head", {
+        opacity:0, x:-12, duration:.6, ease:"power2.out",
+        scrollTrigger:{ trigger:"#mission", start:"top 72%" }
+      });
+
+      // pre-state: hook lines lifted, link undrawn, resolution hidden
+      gsap.set(".mission-hook .hk-line", {autoAlpha:0, y:18});
+      gsap.set(".mission-resolve", {autoAlpha:0, y:18});
+      var linkLen = layoutMissionLink();
+      setMissionLink(linkLen, false);
+
+      var tl = gsap.timeline({
+        scrollTrigger:{ trigger:"#mission", start:"top 68%", once:true }
+      });
+
+      // 1) hook lines reveal, then pillar words decode in place
+      tl.to(".mission-hook .hk-line", {
+        autoAlpha:1, y:0, duration:.6, stagger:.14, ease:"power2.out"
+      });
+      tl.add(function(){
+        decodeSpans(pillarLangSpans, {duration:.7});
+        decodeSpans(pillarPhysSpans, {duration:.7, delay:.12});
+      }, ">-0.2");
+
+      if(fullGesture){
+        // 2) accent link draws from "language" ⇄ "physics" (stroke-dashoffset)
+        var link = { p:0 };
+        tl.to(link, {
+          p:1, duration:.9, ease:"power1.inOut",
+          onStart:function(){
+            // re-measure in case fonts settled, then reset to undrawn
+            linkLen = layoutMissionLink();
+            setMissionLink(linkLen, false);
+          },
+          onUpdate:function(){
+            var path = document.getElementById("missionLinkPath");
+            if(path) path.style.strokeDashoffset = linkLen * (1 - link.p);
+          }
+        }, ">+0.1");
+      } else {
+        // mobile: simplified — just settle the link drawn, no draw gesture
+        tl.add(function(){ setMissionLink(layoutMissionLink(), true); }, ">+0.1");
+      }
+
+      // 3) resolution paragraph reveals; "fuse" gets accent decode emphasis
+      tl.to(".mission-resolve", {
+        autoAlpha:1, y:0, duration:.6, ease:"power2.out"
+      }, ">-0.1");
+      tl.add(function(){ decodeSpans(resolveFuseSpans, {duration:.6}); }, "<+0.15");
+    }
+
+    // keep the mission link aligned with text after fonts/layout settle
+    function refreshMissionLink(){
+      var drawn = false;
+      var path = document.getElementById("missionLinkPath");
+      if(path && parseFloat(path.style.strokeDashoffset || "1") === 0){ drawn = true; }
+      var len = layoutMissionLink();
+      setMissionLink(len, drawn);
+    }
+    window.addEventListener("load", function(){ refreshMissionLink(); ScrollTrigger.refresh(); });
+    window.addEventListener("resize", refreshMissionLink);
+  })();
+  </script>
+</body>
+</html>
